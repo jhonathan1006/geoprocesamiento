@@ -1,0 +1,203 @@
+library(sp)
+library(rgdal)
+library(tmap)
+library(raster)
+#Primera opcion
+
+punt <- rbind(c(584694.64,527402.96),c(584166.54,526778.46),c(585413.33,527126.30), c(585254.07,526487.81), c(584746.83,525920.30),c(585155.92,526942.75),c(585810.92,526513.84))
+punt.sp <- SpatialPoints(punt)
+summary(punt.sp)
+plot(punt.sp,axe=TRUE)
+
+#Adicionando sistemas de coordenadas 
+is.projected(punt.sp)
+                             
+proj4string(punt.sp) <-CRS("+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+
+summary(punt.sp)
+
+#Agregando atributos 
+
+atts <- data.frame(attr1 = c("P1", "P2", "P3", "P4", "P5","P6","P7"), attr2 = c(1:7), 
+                   attr3 = c("Almacen", "reservorio", "caseta1", "vivienda", "caseta2","caseta3","caseta4"))
+
+
+punt.df <- SpatialPointsDataFrame(punt.sp, atts)
+punt.df
+ 
+
+#Segunda opcion 
+# Primera Linea
+est1<- c(585436.32,585388.48,585272.61,585124.14,585376.01,585625.35,585699.67,586069.90)
+nort1<- c(527095.11,526978.94,526900.43,526528.08,526439.07,526181.24,526101.68,525720.83)
+
+latlon1<- cbind(est1,nort1)
+crdref <- CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+via1 <- spLines(latlon1, crs=crdref)
+via1
+plot(via1)
+
+atts1 <- data.frame(attr1 = c("P1", "P2", "P3", "P4", "P5","P6", "P7", "P8"))
+
+
+red1 <- SpatialLinesDataFrame(via1, atts1)
+red1
+
+
+# Segunda linea
+est2<- c(584707.52,584765.60, 585231.79,585374.39)
+nort2<- c(525895.64,526035.05,526107.62,526434.13)
+
+latlon1<- cbind(est2,nort2)
+crdref <- CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+via2 <- spLines(latlon1, crs=crdref)
+via2
+plot(via2)
+
+atts2 <- data.frame(attr2 = c("P1", "P2", "P3", "P4"))
+
+
+red2 <- SpatialLinesDataFrame(via2, atts2)
+red2
+
+
+# Tercera linea
+est3<- c(585879.31,585495.23,585701.46)
+nort3<- c(525227.34,525571.18,526094.24)
+
+latlon1<- cbind(est3,nort3)
+crdref <- CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+via3 <- spLines(latlon1, crs=crdref)
+via3
+plot(via3)
+
+atts3 <- data.frame(attr3 = c("P1", "P2", "P3"))
+
+red3 <- SpatialLinesDataFrame(via3, atts3)
+red3
+
+
+# Cuarta linea
+est4<- c(585496.10,585452.88,585769.90,585724.77,586402.83)
+nort4<- c(527254.79,527133.19,527007.82,526865.42,526581.52)
+
+latlon1<- cbind(est4,nort4)
+crdref <- CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+via4 <- spLines(latlon1, crs=crdref)
+via4
+plot(via4)
+
+atts4 <- data.frame(attr4 = c("P1", "P2","P3", "P4","P5"))
+
+red4 <- SpatialLinesDataFrame(via4, atts4)
+red4
+#
+
+# Quinta linea
+est5<- c(585625.00,585706.40,585785.40,585872.58,585811.16,585924.41,585915.95,585950.50,586052.77)
+nort5<- c(526181.00,526379.76,526362.74,526354.69,526181.65,526130.84,526088.36,526069.93,525818.15)
+
+latlon1<- cbind(est5,nort5)
+crdref <- CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+via5 <- spLines(latlon1, crs=crdref)
+via5
+plot(via5)
+
+atts5 <- data.frame(attr5 = c("P1", "P2","P3", "P4","P5","P6","P7","P8","P9"))
+
+red5 <- SpatialLinesDataFrame(via5, atts5)
+red5
+
+
+
+subs_union <- union(red1, red2)
+unir <-  union(subs_union, red3)
+unir1 <-  union(unir, red4)
+linea <-union(unir1,red5)
+plot(linea, axe=TRUE)
+
+#para crear poligonos 
+#Primer poligono.
+este<- c(585361.65, 584425.21,584233.73,584442.30,584805.81,585079.26,585130.25,585361.65)
+norte<- c(526430.86,526764.45,526327.28,526114.78,525653.62,525922.02,525877.93,526430.86)
+poly1 <- sp::Polygon(cbind(este,norte))
+poli <- sp::Polygons(list(poly1), ID = "A")
+polig <- sp::SpatialPolygons(list(poli))
+polig
+plot(polig)
+
+proj4string(polig) = CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+summary(polig)
+
+#Segundo poligono.
+este1<- c(585130.25,585440.63,585690.41,585377.74,585130.25)
+norte1<- c(525877.93,525509.54,526095.40,526426.29,525877.93)
+poly1 <- sp::Polygon(cbind(este1,norte1))
+poli1 <- sp::Polygons(list(poly1), ID = "A")
+polig1 <- sp::SpatialPolygons(list(poli1))
+polig1
+plot(polig1)
+
+proj4string(polig1) = CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+summary(polig1)
+
+#Tercer poligono.
+este1<- c(585440.63,585695.17,585769.90,585980.42,586034.50,586065.84,585703.98,585440.63)
+norte1<- c(525509.54,525215.52,525020.69,525231.17,525422.34,525715.01,526089.42,525509.54)
+poly1 <- sp::Polygon(cbind(este1,norte1))
+poli2 <- sp::Polygons(list(poly1), ID = "A")
+polig2 <- sp::SpatialPolygons(list(poli2))
+polig2
+plot(polig2)
+
+proj4string(polig2) = CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+summary(polig2)
+
+
+#cuarto poligono.
+este1<- c(585378.85,585608.26,585449.46,585389.45,585269.54,585128.15,585378.85)
+norte1<- c(526441.90,527069.42,527132.39,526972.99,526889.88,526528.43,526441.90)
+poly1 <- sp::Polygon(cbind(este1,norte1))
+poli3 <- sp::Polygons(list(poly1), ID = "A")
+polig3 <- sp::SpatialPolygons(list(poli3))
+polig3
+plot(polig3)
+
+proj4string(polig3) = CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+summary(polig3)
+
+
+#quinto poligono.
+este1<- c(585755.82,585451.64,585380.77,585625.32,585755.82)
+norte1<- c(526509.20,526629.05,526440.22,526193.01,526509.20)
+poly1 <- sp::Polygon(cbind(este1,norte1))
+poli4 <- sp::Polygons(list(poly1), ID = "A")
+polig4 <- sp::SpatialPolygons(list(poli4))
+polig4
+plot(polig4)
+
+proj4string(polig4) = CRS('+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+summary(polig4)
+
+
+
+poliunion <- union(polig, polig1)
+vinc <-  union(poliunion, polig2)
+vinc1 <-union(vinc, polig3)
+poligono <-union(vinc1, polig4)
+
+plot(poligono, axe=TRUE)
+poligono
+spplot(poligono,axe=TRUE)
+
+#calculo de area
+poligono$area_sqkm <- area(poligono)/10000 
+poligono$area_sqkm
+
+# Presentando en el mapa 
+
+tm_shape(poligono)+ tm_polygons()+ tm_grid(n.x = 4, n.y = 4,labels.inside.frame = FALSE)+
+tm_compass(position = c("right", "top"))+ tm_layout(title = "Sub division de predios")+
+tm_scale_bar(position=c("left", "bottom"))+
+tm_shape(unir1)+tm_lines(col= "green", lwd= 1.5)+
+tm_shape(punt.sp)+tm_dots(size = 0.3,col= "blue")
